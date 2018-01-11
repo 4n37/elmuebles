@@ -1,5 +1,11 @@
 <!DOCTYPE html>
-<!-- LUKAS HOFER - ANEL BECIRBEGOVIC-->
+<!--
+  Copyright (c) 2018 EL Muebles, Switzerland.
+
+  Project 'EL Muebles'
+
+  Lukas Hofer, Anel Becibergovic
+ -->
 <html>
   <head>
 

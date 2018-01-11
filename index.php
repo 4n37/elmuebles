@@ -1,4 +1,5 @@
 <?php
+
 	// F R O N T   C O N T R O L L E R
 
 	require_once 'autoloader.php';
