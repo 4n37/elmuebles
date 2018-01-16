@@ -10,7 +10,10 @@ Da dies der Admin Bereich ist wird auf eine Formvalidierung verzichtet (Aufgrund
     <div class="w3-container w3-white">
       <p><b><?php echo I18n::get("orders"); ?></b></p>
       <p><a href="#" onclick="showallOrders()"><?php echo I18n::get("all_orders"); ?></a> </p>
+      <p><?php echo I18n::get("order_notfinished");?></p>
         <ul id="allorders"></ul>
+        <p><?php echo I18n::get("order_finished");?></p>
+        <ul id="allfinishedorders"></ul>
     </div>
   </div>
   <div class="w3-third w3-container w3-margin-bottom">

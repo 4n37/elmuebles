@@ -1,20 +1,20 @@
 <!--Step 1: Shopping Cart -->
 	<div class="w3-third w3-container w3-margin-bottom" >
-		<div id="step1" class="w3-container w3-white" >
+		<div class="w3-container w3-white" >
 			<h5><?php echo I18n::get("step"); ?> 1</h5>
 			<h3><?php echo I18n::get("shopping_cart"); ?> </h3>
 		</div>
   </div>
 <!--Step 2: Login -->
 	<div class="w3-third w3-container w3-margin-bottom">
-		<div id="step2" class="w3-container w3-grey">
+		<div class="w3-container w3-grey">
 			<h5><?php echo I18n::get("step"); ?> 2</h5>
 			<h3><?php echo I18n::get("to_login"); ?></h3>
 		</div>
   </div>
 <!--Step 3: Delivery and Payment -->
 	<div class="w3-third w3-container w3-margin-bottom">
-		<div id="step3" class="w3-container w3-white">
+		<div class="w3-container w3-white">
 			<h5><?php echo I18n::get("step"); ?>  3</h5>
 			<h3><?php echo I18n::get("delivery_payment"); ?> </h3>
 		</div>

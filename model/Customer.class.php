@@ -16,6 +16,7 @@ class Customer implements JsonSerializable{
 
 	public function jsonSerialize(){
 		return[
+			'Name' => $this->Name,
 			'email' => $this->Email,
 		];
 	}

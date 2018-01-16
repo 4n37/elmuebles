@@ -103,11 +103,12 @@ class Controller {
 		$orderposition = Orderpositions::getOrderPositions($OrderNo);
 		if(empty($orderposition)){
 			$this->data["error"] = I18n::get("no_orders");
+			unset($_SESSION['cart']);
 			return "cart_table";
 		}
-		else $this->data["orderposition"] = $orderposition;
-		//print_r($orderposition);
-
+		else {
+			$this->data["orderposition"] = $orderposition;
+		}
 		return "cart_table";
 
 	}
@@ -286,6 +287,7 @@ class Controller {
 		$products = Product::getProducts($sort);
 		if(empty($products)){
 			$this->data["error"] = I18n::get("no_products");
+			unset($_SESSION['cart']);
 			return "home";
 		}
 		else $this->data["products"] = $products;
@@ -305,30 +307,23 @@ class Controller {
 		if(isset($_SESSION['user'])) {
 	        $this->data["login"] = "Logged in";
 	  }
-		//getOrders
-		$customer = Customer::getCustomerbyID($_SESSION['user']);
-		$order = Order::getOrderByCustomerID($customer->getCustomerNo());
 		//getOrderPositions
 		$OrderNo = $_SESSION['orderNo'];
 		$orderposition = Orderpositions::getOrderPositions($OrderNo);
 		if(empty($orderposition)){
 			$this->data["error"] = I18n::get("no_orders");
+			unset($_SESSION['cart']);
 			return "cart_table";
 		}
 		else $this->data["orderposition"] = $orderposition;
-		/*if(isset($order))
-		$OrderNo = $order->getOrderNo();
-		else {
-			$this->data["error"] = I18n::get("no_orders");
-			return "cart_table";
-		}
-		$orderposition = Orderpositions::getOrderPositions($OrderNo);
-		if(empty($orderposition)){
-			$this->data["error"] = I18n::get("no_orders");
-			return "cart_table";
-		}
-		else $this->data["orderposition"] = $orderposition;
-*/
+		//print_r($orderposition);
+		//getOrders
+		$customer = Customer::getCustomerbyID($_SESSION['user']);
+		$CustomerNo = $customer->getCustomerNo();
+
+			$customer = Order::updateOrder($OrderNo, $CustomerNo);
+
+
 		return "cart_payment";
 	}
 	public function send_order(Request $request){
@@ -385,6 +380,12 @@ class Controller {
 		$customer = Customer::getCustomerbyID($_SESSION['user']);
 		Order::setOrderFinished($customer->getCustomerNo());
 		$this->data["error"] = I18n::get("order_send");
+		unset($_SESSION['cart']);
+		//@Todo Warenkorb leeren -> Problem: order no is not same as users order no!!!!
+		$OrderNo = $_SESSION['orderNo'];
+		Orderpositions::clearOrderPositions($OrderNo);
+		//Inititalize Order
+		Order::init();
 		return "home";
 	}
 	public function search(Request $request){
@@ -399,9 +400,57 @@ class Controller {
 			return "home";
 		}
 		else $this->data["products"] = $products;
+
 		return "home";
 	}
-
+	public function removeProduct(Request $request){
+		$posno = $request->getParameter('posno', '');
+		if(!Orderpositions::removeItemFromOrderposition($posno)){
+			$this->data["error"] = "Diese Produkt ist nicht in ihrer Bestellung!";
+			return "cart_table";
+		}
+		$OrderNo = $_SESSION['orderNo'];
+		$orderposition = Orderpositions::getOrderPositions($OrderNo);
+		if(empty($orderposition)){
+			$this->data["error"] = I18n::get("no_orders");
+			unset($_SESSION['cart']);
+			return "cart_table";
+		}
+		else {
+			$this->data["orderposition"] = $orderposition;
+		}
+		return "cart_table";
+	}
+	public function incQuantity(Request $request){
+		$pos_no = $request->getParameter('pos_no', '');
+		Orderpositions::incQuantity($pos_no);
+		$OrderNo = $_SESSION['orderNo'];
+		$orderposition = Orderpositions::getOrderPositions($OrderNo);
+		if(empty($orderposition)){
+			$this->data["error"] = I18n::get("no_orders");
+			unset($_SESSION['cart']);
+			return "cart_table";
+		}
+		else {
+			$this->data["orderposition"] = $orderposition;
+		}
+		return "cart_table";
+	}
+	public function decQuantity(Request $request){
+		$pos_no = $request->getParameter('pos_no', '');
+		Orderpositions::decQuantity($pos_no);
+		$OrderNo = $_SESSION['orderNo'];
+		$orderposition = Orderpositions::getOrderPositions($OrderNo);
+		if(empty($orderposition)){
+			$this->data["error"] = I18n::get("no_orders");
+			unset($_SESSION['cart']);
+			return "cart_table";
+		}
+		else {
+			$this->data["orderposition"] = $orderposition;
+		}
+		return "cart_table";
+	}
 
 
 	// H E L P E R S
@@ -438,14 +487,6 @@ class Controller {
 		return isset($_SESSION['admin']);
 	}
 
-	public function cartSetwithproducts(){
-		/*$this->startSession();
-		$id= $_SESSION['orderNo'];
-		echo $id;
-		$orders = Order::getOrderByCustomerID($id);
-		if(isset($orders))return true;
-		return false;*/
-	}
 
 	public function getTitle() {
 		return $this->title;
@@ -495,10 +536,13 @@ class Controller {
 		$productname = $product->getTitleDE();
 		echo $productname;
 	}
-	public static function printProductPrice($id){
+	public static function printProductPrice($id, $OrderNo){
 		$productoption= Productoption::getProductoptionbyID($id);
-		$productname = $productoption->getPOPrice();
-		echo $productname;
+		$price =  $productoption->getPOPrice();
+		$orderposition = Orderpositions::getOrderPositionByID($OrderNo);
+		$quantity = $orderposition->getQuantity();
+		$price = $price*$quantity;
+		echo $price;
 	}
 
 

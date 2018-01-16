@@ -6,13 +6,15 @@ class Order implements JsonSerializable{
 	private $CustomerNo;
 	private $IsFinished;
 
-
 	function __construct() {
 			}
+			
 	public function jsonSerialize(){
 				return[
 					'OrderNo' => $this->OrderNo,
 					'OrderDate' => $this->OrderDate,
+					'CustomerNo' => $this->CustomerNo,
+					'IsFinished' => $this->IsFinished,
 				];
 	}
 
@@ -33,67 +35,67 @@ class Order implements JsonSerializable{
 	static public function init() {
 
 		if(isset($_SESSION['orderNo'])){
-
-			//echo "OrderNo ist bereits generiert: {$_SESSION['orderNo']} !";
-
-		}else{
-
+			$OrderNo = $_SESSION['orderNo'];
 			$db = DB::getInstance();
-			$temporderno = DB::doQuery("SELECT OrderNo FROM orders WHERE OrderNo = (SELECT MAX(OrderNo) FROM orders)");
-			if ($temporderno) {
-				while ($temp = $temporderno->fetch_object(get_class())) {
-					$out[] = $temp;
-				}
+			$orderfinish = DB::doQuery("SELECT * FROM orders WHERE IsFinished = '0' AND OrderNo = $OrderNo");
+			if($orderfinish->num_rows !== 0){
+				return true;
 			}
-			foreach($out as $ordernumber)
-				//echo($ordernumber->getOrderNo());
-			$temporderno = $ordernumber->getOrderNo() + 1;
-
-			$answer = DB::doQuery("INSERT INTO orders (OrderNo, OrderDate, CustomerNo, IsFinished) VALUES ($temporderno,null,null,false)");
-
-			$_SESSION['orderNo'] = $temporderno;
-
-			//echo "Generierte OrderNo ist: {$temporderno} !";
 
 		}
+		$timezone = date_default_timezone_get();
+		$year = date('Y', time());
+		$month = date('m', time());
+		$day = date('d', time());
+		$date = $year."-".$month."-".$day;
+		$db = DB::getInstance();
+		$temporderno = DB::doQuery("SELECT OrderNo FROM orders WHERE OrderNo = (SELECT MAX(OrderNo) FROM orders)");
+		if($temporderno->num_rows === 0)
+		 {
+			 $answer = DB::doQuery("INSERT INTO orders (OrderNo, OrderDate, CustomerNo, IsFinished) VALUES ('1000','$date',null,false)");
+			 $_SESSION['orderNo'] = 1;
+			 return true;
+	 		}
+		if ($temporderno) {
+			while ($temp = $temporderno->fetch_object(get_class())) {
+				$out[] = $temp;
+			}
+		}
+
+		foreach($out as $ordernumber)
+			$temporderno = $ordernumber->getOrderNo() + 1;
+		$answer = DB::doQuery("INSERT INTO orders (OrderNo, OrderDate, CustomerNo, IsFinished) VALUES ($temporderno,'$date',null,false)");
+
+		$_SESSION['orderNo'] = $temporderno;
+
   }
+	static public function updateOrder($OrderNo, $CustomerNo){
 
-	//Füge Bestellposition ein
+		$db = DB::getInstance();
+		$CustomerNo = $db->real_escape_string($CustomerNo);
+		$OrderNo = $db->real_escape_string($OrderNo);
+		$sql = sprintf("UPDATE orders SET CustomerNo='%d' WHERE OrderNo = '%d' AND IsFinished=0;", $CustomerNo, $OrderNo);
+		$res = DB::doQuery($sql);
+		//Insert new order when order not exists
+		if($res == null){
+			$timezone = date_default_timezone_get();
+			$year = date('Y', time());
+			$month = date('m', time());
+			$day = date('d', time());
+			$date = $year."-".$month."-".$day;
+
+			$answer = DB::doQuery("INSERT INTO orders (OrderNo, OrderDate, CustomerNo, IsFinished) VALUES ($OrderNo,'$date',$CustomerNo,false)");
+		}
+	}
+	//@Todo Produktoptionen anpassen!!!!!
 	static public function addItemToOrder($value){
-
-		//echo "addItem ProNo: {$value} !"; //OK hier ist die Produktnummer
+		$db = DB::getInstance();
+		$value = $db->real_escape_string($value);
 
 		$orderno = $_SESSION['orderNo'];
-
 		$answer = DB::doQuery("INSERT INTO orderpositions (order_no, product_no,product_opt_no, quantity) VALUES ($orderno,$value,5,1)");
 
-		//$db = DB::getInstance();
-		//$values['title_de'] = $db->real_escape_string($values['title_de']);
 
-	}
-
-	static public function getOrderPositionsByOrderID($orderid){
-		echo "getOrderPosByOrderID orderid = {$orderid} !";
-		//SELECT product.P_desc_DE, orderpositions.quantity FROM orderpositions INNER JOIN product ON orderpositions.product_no=product.ProdNo WHERE orderpositions.order_no = 1003;
-		$res = DB::doQuery("SELECT product.P_desc_DE, orderpositions.quantity FROM orderpositions INNER JOIN product ON orderpositions.product_no=product.ProdNo WHERE orderpositions.order_no = {$orderid}");
-		if($res){
-			if($orderpos = $res->fetch_object(get_class())){
-					return $orderpos;
-		}else{
-			echo "KEIN MATCH FUR {$orderid} !";
-		}
-	}
-}
-
-	static public function getOrderByCustomerID($id) {
-		$username = DB::getInstance()->real_escape_string($id);
-		$res = DB::doQuery("SELECT * FROM orders WHERE CustomerNo = '$id'");
-		if($res){
-				if($user = $res->fetch_object(get_class())){
-						return $user;
-				}
-		}
-		return null;
 	}
 
 	static public function setOrderFinished($cusomterid){
@@ -120,7 +122,4 @@ class Order implements JsonSerializable{
 		}
 		return $allorders;
 	}
-
-
-
 }
