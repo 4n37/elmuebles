@@ -278,10 +278,10 @@ class Controller {
 	public function to_order(Request $request){
 		//$this->data["ProdNo"]
 	}
-	//Warenkorb ENDE
+
 	public function addItemToCart(Request $request){
 		$values = $request->getParameter('row', array());
-		Order::addItemToOrder($values['ProdNo']);
+		Orderpositions::addItemToOrder($values['ProdNo']);
 		$_SESSION['lang'] = "de";
 		$sort = $request->getParameter('sort', 'ProdNo');
 		$products = Product::getProducts($sort);
@@ -291,6 +291,8 @@ class Controller {
 			return "home";
 		}
 		else $this->data["products"] = $products;
+
+
 		$_SESSION['cart'] = $products;
 		$this->title = "Home";
 		return "home";

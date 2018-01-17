@@ -8,7 +8,7 @@ class Order implements JsonSerializable{
 
 	function __construct() {
 			}
-			
+
 	public function jsonSerialize(){
 				return[
 					'OrderNo' => $this->OrderNo,
@@ -87,16 +87,7 @@ class Order implements JsonSerializable{
 			$answer = DB::doQuery("INSERT INTO orders (OrderNo, OrderDate, CustomerNo, IsFinished) VALUES ($OrderNo,'$date',$CustomerNo,false)");
 		}
 	}
-	//@Todo Produktoptionen anpassen!!!!!
-	static public function addItemToOrder($value){
-		$db = DB::getInstance();
-		$value = $db->real_escape_string($value);
 
-		$orderno = $_SESSION['orderNo'];
-		$answer = DB::doQuery("INSERT INTO orderpositions (order_no, product_no,product_opt_no, quantity) VALUES ($orderno,$value,5,1)");
-
-
-	}
 
 	static public function setOrderFinished($cusomterid){
 		$db = DB::getInstance();
