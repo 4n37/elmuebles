@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 11. Jan 2018 um 09:37
+-- Erstellungszeit: 18. Jan 2018 um 15:23
 -- Server-Version: 10.1.26-MariaDB
 -- PHP-Version: 7.1.9
 
@@ -72,7 +72,12 @@ INSERT INTO `customer` (`CustomerNo`, `Name`, `Surname`, `Street`, `Citycode`, `
 (3, 'Testmann', 'Testo', 'Test', 3000, 'Test', 'testuser@test.ch', '$2y$10$nBzlJeptmPfszZM8Qtrmz.GxYsdPvr9rVzVPXaVxtOiUFihXEOBNi', 1),
 (4, 'Egli', 'Lukas', 'Grossenstrasse ', 2300, 'Biel', 'admin@bfh.ch', '$2y$10$CfeEbOJHJoJizK7gi/mdAepaRVbV2K51Kv3txUInTadGr4.Seh4Hm', 1),
 (7, 'Hofer', 'Tod', 'Test', 3200, 'Thun', 'testadmin@bfh.ch', '$2y$10$CTrcIzEuDWevMiiaEinVrumX7BZTKoQ6ApIGG.lJIWfcSE0ejKhM.', 0),
-(10, 'Test', 'a', 'Test', 3000, 'Bern', 'v@i.ch', '$2y$10$tjqYJRwljPU35yOOTrRrPeUbqN4vsqXaDscScLocHSCXTU31ioW6W', 0);
+(10, 'Test', 'a', 'Test', 3000, 'Bern', 'v@i.ch', '$2y$10$tjqYJRwljPU35yOOTrRrPeUbqN4vsqXaDscScLocHSCXTU31ioW6W', 0),
+(11, 'Klossner', 'lena', 'test234', 1200, 'Thun', 'lena@cool.ch', '$2y$10$qS9fyUiQxKtdWTAuXWeyCuzvb15ig6U2BCwG/mpAyi5jeTLxU8/dq', 0),
+(13, 'Hofer', 'Lukas', 'Sulgenauweg', 3008, 'Bern', 'lukashofer@bluemail.ch', '$2y$10$Hd1g4qzrCWP3VXXz3FtStuo2AM.PS79Wpjeu4qCaDPprDzt7q0aty', 0),
+(14, '', '', '', 0, '', 'lkjl@bfh.ch', '$2y$10$MrKauL.GWCKOUyc3Qa3YKeZuWRbwIw0LqFAA8e6p5XKeGCJ6CBb6i', 0),
+(15, 'asdf', 'af', 'asdf', 3600, 'asdf', 'test@bhf.ch', '$2y$10$0ih.mnIGMMqN1DygwPzcMeQn/FFVSSnw0h8Ye4lN61Bb/yboS8gYO', 0),
+(16, 'sdfsf', 'ihk', 'iiuiuhc', 3000, 'sfvd', 's@s.com', '$2y$10$9x42JOrqrs1KAypH9SlRJuhRxuU4YE67kv9BeZBewy13.MJZizyha', 0);
 
 -- --------------------------------------------------------
 
@@ -93,38 +98,12 @@ CREATE TABLE `orderpositions` (
 --
 
 INSERT INTO `orderpositions` (`pos_no`, `order_no`, `product_no`, `product_opt_no`, `quantity`) VALUES
-(2, 1000, 11, 8, 0),
-(8, 1003, 16, 11, 1),
-(12, 1003, 6, 10, 1),
-(16, 1003, 11, 8, 1),
-(19, 1003, 16, 10, 1),
-(20, 1004, 7, 5, 1),
-(21, 1004, 8, 7, 1),
-(22, 1004, 8, 4, 1),
-(23, 1005, 7, 10, 1),
-(24, 1006, 6, NULL, 1),
-(25, 1006, 6, NULL, 1),
-(26, 1006, 6, NULL, 1),
-(36, 1008, 6, 5, 1),
-(37, 1009, 6, 5, 1),
-(40, 1011, 12, 5, 1),
-(41, 1011, 17, 5, 1),
-(42, 1013, 6, 5, 1),
-(43, 1013, 6, 5, 1),
-(44, 1014, 7, 5, 1),
-(48, 1018, 6, 5, 1),
-(49, 1018, 6, 5, 1),
-(50, 1018, 6, 5, 1),
-(51, 1018, 6, 5, 1),
-(53, 1019, 6, 5, 1),
-(54, 1020, 7, 5, 1),
-(55, 1020, 9, 5, 1),
-(56, 1022, 7, 5, 1),
-(57, 1022, 12, 5, 1),
-(58, 1025, 6, 5, 1),
-(59, 1025, 12, 5, 1),
-(60, 1026, 7, 5, 1),
-(61, 1026, 15, 5, 1);
+(13, 1007, 8, 5, 2),
+(14, 1007, 6, 5, 2),
+(16, 1011, 7, 5, 1),
+(39, 1013, 7, 5, 1),
+(40, 1014, 6, 5, 1),
+(41, 1014, 12, 5, 1);
 
 -- --------------------------------------------------------
 
@@ -144,34 +123,21 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`OrderNo`, `OrderDate`, `CustomerNo`, `IsFinished`) VALUES
-(999, NULL, NULL, 0),
-(1000, NULL, NULL, 0),
-(1001, NULL, NULL, 0),
-(1002, NULL, NULL, 0),
-(1003, NULL, NULL, 0),
-(1004, NULL, NULL, 0),
-(1005, NULL, NULL, 0),
-(1006, NULL, NULL, 0),
-(1007, NULL, NULL, 0),
-(1008, NULL, NULL, 0),
-(1009, NULL, NULL, 0),
-(1010, NULL, NULL, 0),
-(1011, NULL, NULL, 0),
-(1012, NULL, NULL, 0),
-(1013, NULL, NULL, 0),
-(1014, NULL, NULL, 0),
-(1015, NULL, NULL, 0),
-(1016, NULL, NULL, 0),
-(1017, NULL, NULL, 0),
-(1018, NULL, NULL, 0),
-(1019, NULL, NULL, 0),
-(1020, NULL, NULL, 0),
-(1021, NULL, NULL, 0),
-(1022, NULL, NULL, 0),
-(1023, NULL, NULL, 0),
-(1024, NULL, NULL, 0),
-(1025, NULL, NULL, 0),
-(1026, NULL, NULL, 0);
+(1000, '2018-01-16', NULL, 0),
+(1001, '2018-01-16', 13, 1),
+(1002, '2018-01-16', 13, 1),
+(1003, '2018-01-16', NULL, 0),
+(1004, '2018-01-16', 13, 1),
+(1005, '2018-01-16', 13, 1),
+(1006, '2018-01-16', NULL, 0),
+(1007, '2018-01-16', NULL, 0),
+(1008, '2018-01-16', NULL, 0),
+(1009, '2018-01-16', NULL, 0),
+(1010, '2018-01-16', 16, 1),
+(1011, '2018-01-16', NULL, 0),
+(1012, '2018-01-16', 13, 1),
+(1013, '2018-01-18', NULL, 0),
+(1014, '2018-01-18', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -297,19 +263,19 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT für Tabelle `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `CustomerNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `CustomerNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT für Tabelle `orderpositions`
 --
 ALTER TABLE `orderpositions`
-  MODIFY `pos_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `pos_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT für Tabelle `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `OrderNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1027;
+  MODIFY `OrderNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1015;
 
 --
 -- AUTO_INCREMENT für Tabelle `product`
