@@ -92,6 +92,7 @@ class Product implements JsonSerializable {
       $orderByStr = " ORDER BY $orderBy";
     }
     $allproducts = array();
+    $search = DB::getInstance()->real_escape_string($search);
     if(isset($_SESSION['lang']) && ($_SESSION['lang'] =="en")) $res = DB::doQuery("SELECT ProdNo, P_desc_DE,P_desc_EN, P_Title_DE, P_Title_EN, P_Pictures_Big, P_Pictures_Small FROM product where P_Title_EN LIKE '%" . $search ."%'");
     else $res = DB::doQuery("SELECT ProdNo, P_desc_DE, P_desc_EN, P_Title_DE, P_Title_EN, P_Pictures_Big, P_Pictures_Small FROM product where P_Title_EN LIKE '%" . $search ."%'");
     if ($res) {
@@ -108,6 +109,7 @@ class Product implements JsonSerializable {
       $orderByStr = " ORDER BY $orderBy";
     }
     $allproducts = array();
+    $P_CategoryNo = DB::getInstance()->real_escape_string($P_CategoryNo);
     if(isset($_SESSION['lang']) && ($_SESSION['lang'] =="en")) $res = DB::doQuery("SELECT ProdNo, P_desc_DE,P_desc_EN, P_Title_DE, P_Title_EN, P_Pictures_Big, P_Pictures_Small FROM product WHERE `P_CategoryNo` = $P_CategoryNo");
     else $res = DB::doQuery("SELECT ProdNo, P_desc_DE, P_desc_EN, P_Title_DE, P_Title_EN, P_Pictures_Big, P_Pictures_Small FROM product WHERE `P_CategoryNo` = $P_CategoryNo");
     if ($res) {
@@ -118,8 +120,8 @@ class Product implements JsonSerializable {
     return $allproducts;
   }
   static public function getProductbyID($ProdNo) {
-		$id = DB::getInstance()->real_escape_string($ProdNo);
-		$res = DB::doQuery("SELECT * FROM product WHERE ProdNo = '$id'");
+		$ProdNo = DB::getInstance()->real_escape_string($ProdNo);
+		$res = DB::doQuery("SELECT * FROM product WHERE ProdNo = '$ProdNo'");
 		if($res){
 				if($product = $res->fetch_object(get_class())){
 						return $product;
@@ -127,9 +129,9 @@ class Product implements JsonSerializable {
 		}
 		return null;
 	}
-  static public function getProductoptionbyID($ProdNo) {
-		$id = DB::getInstance()->real_escape_string($ProdNo);
-		$res = DB::doQuery("SELECT * FROM productopt WHERE ProdOptNo = '$id'");
+  static public function getProductoptionbyID($ProdOptNo) {
+		$ProdOptNo = DB::getInstance()->real_escape_string($ProdOptNo);
+		$res = DB::doQuery("SELECT * FROM productopt WHERE ProdOptNo = '$ProdOptNo'");
 		if($res){
 				if($productopt = $res->fetch_object(get_class())){
 						return $productopt;

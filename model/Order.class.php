@@ -31,17 +31,17 @@ class Order implements JsonSerializable{
 			return $this->IsFinished;
 	}
 
-	//Erstelle oder öffne Order für diese Session
+	// Create Order Number for every customer
 	static public function init() {
 
 		if(isset($_SESSION['orderNo'])){
 			$OrderNo = $_SESSION['orderNo'];
 			$db = DB::getInstance();
+			$OrderNo = DB::getInstance()->real_escape_string($OrderNo);
 			$orderfinish = DB::doQuery("SELECT * FROM orders WHERE IsFinished = '0' AND OrderNo = $OrderNo");
 			if($orderfinish->num_rows !== 0){
 				return true;
 			}
-
 		}
 		$timezone = date_default_timezone_get();
 		$year = date('Y', time());
@@ -70,7 +70,6 @@ class Order implements JsonSerializable{
 
   }
 	static public function updateOrder($OrderNo, $CustomerNo){
-
 		$db = DB::getInstance();
 		$CustomerNo = $db->real_escape_string($CustomerNo);
 		$OrderNo = $db->real_escape_string($OrderNo);
@@ -83,16 +82,14 @@ class Order implements JsonSerializable{
 			$month = date('m', time());
 			$day = date('d', time());
 			$date = $year."-".$month."-".$day;
-
 			$answer = DB::doQuery("INSERT INTO orders (OrderNo, OrderDate, CustomerNo, IsFinished) VALUES ($OrderNo,'$date',$CustomerNo,false)");
 		}
 	}
 
-
-	static public function setOrderFinished($cusomterid){
+	static public function setOrderFinished($CustomerNo){
 		$db = DB::getInstance();
 		$IsFinished = "1";
-		$CustomerNo = $db->real_escape_string($cusomterid);
+		$CustomerNo = $db->real_escape_string($CustomerNo);
 		//Save Data
 		$sql = sprintf("UPDATE orders SET IsFinished='%d' WHERE CustomerNo = %s;", $IsFinished, $CustomerNo);
 		$res = DB::doQuery($sql);

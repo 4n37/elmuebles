@@ -9,7 +9,7 @@ class I18n{
     }
 
   static public function get($key) {
-    //Default language is German
+    //Default Language is German
     if(isset($_SESSION['lang']) && $_SESSION['lang']==="en"){
       return I18n::$content->en->$key;
     } else {

@@ -68,7 +68,9 @@
       "add_item" : " Produkt hinzufügen",
       "all_orders" : "Alle Bestellungen anzeigen",
       "order_notfinished" : "Ausstehende Bestellungen",
-      "order_finished" : "Ausgelieferte Bestellungen"
+      "order_finished" : "Ausgelieferte Bestellungen",
+      "text" : "Bitte geben Sie Text ein!",
+      "valid_zip" : "Bitte geben Sie ein valide Zip (xxxx) ein!"
 
    },
    "en":{
@@ -140,6 +142,8 @@
       "add_item" : " Add item to Cart",
       "all_orders" : "Show all orders",
       "order_notfinished" : "Pending Orders",
-      "order_finished" : "Finished Orders"
+      "order_finished" : "Finished Orders",
+      "text" : "Please type in characters!",
+      "valid_zip" : "Please enter a valide Zip (xxxx)!"
    }
 }

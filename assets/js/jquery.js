@@ -30,16 +30,10 @@ function hide_register_product(){
 function show_register_user(){
 document.getElementById("user_register").style.display="block";
 }
-
 function show_register_product(){
   document.getElementById("product_register").style.display="block";
   $("#allusers").empty();
   $("#allproducts").empty();
-}
-
-function showPayment(){
-  if(document.getElementById("step1_button").style.display=="block")
-  document.getElementById("step2_button").style.display="block";
 }
 function creditcard() {
   document.getElementById("creditcard").style.display="block";
@@ -110,10 +104,7 @@ function showallOrders(){
   },
 })
 }
-function plusquantity(quantity){
-  console.log(quantity+1);
-  return quantity+1;
-}
+
 function validateForm() {
 			// Validate email
 			var email = form["email"].value;

@@ -17,10 +17,10 @@ class Controller {
 			return "home";
 		}
 		else $this->data["products"] = $products;
-		//Inititalize Order
 		Order::init();
 		$this->title = "Home";
 	}
+
 	public function create_product(Request $request) {
 		$this->data["message"] = "create new product";
 		if($this->IsAdmin())return "admin";
@@ -61,6 +61,7 @@ class Controller {
 		}
 		return "login";
 	}
+
 	public function ct_login(Request $request){
 		$username = $request->getParameter('username', '');
 		$pw = $request->getParameter('pw', '');
@@ -99,6 +100,8 @@ class Controller {
 	}
 
 	public function shopping_cart(Request $request){
+		if(!isset($_SESSION['orderNo']))
+			return "cart_table";
 		$OrderNo = $_SESSION['orderNo'];
 		$orderposition = Orderpositions::getOrderPositions($OrderNo);
 		if(empty($orderposition)){
@@ -118,17 +121,31 @@ class Controller {
 
 		if (!preg_match('/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/',$values['email'])) {
 				$this->data["error"] = I18n::get("enter_valid_email");
-				return "register";
 		}
-		if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{4,}$/',$values['password'])) {
+		else if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{4,}$/',$values['password'])) {
 				$this->data["error"] = I18n::get("valid_pw");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['name'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['surname'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['street'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		else if (!preg_match('/^[0-9]{4}$/',$values['citycode'])) {
+				$this->data["error"] = I18n::get("valid_zip");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['city'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		if(isset($this->data["error"])){
 				return "register";
 		}
 		//Hash password
 	  $values['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
-
 		Customer::registernewUser($values);
-
 		return "login";
 	}
 
@@ -137,13 +154,8 @@ class Controller {
 		Product::registerNewProduct($values);
 		if($this->IsAdmin())return "admin";
 		return $this->page403();
-
 	}
-	public function add_param(&$url, $name, $value) {
-			$sep = strpos($url, '?') !== false ? '&' : '?';
-			$url .= $sep . $name . "=" . urlencode($value);
-			return $url;
-		}
+
 	public function EN(Request $request){
 		$_SESSION['lang'] = "en";
 		$sort = $request->getParameter('sort', 'ProdNo');
@@ -183,13 +195,31 @@ class Controller {
 			return "login";
 		}
 		$values = $request->getParameter('customer', array());
-		$customer = Customer::getCustomerbyID($_SESSION['user']);
+		if (!preg_match('/^[a-zA-Z ]*$/',$values['name'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['surname'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['street'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		else if (!preg_match('/^[0-9]{4}$/',$values['citycode'])) {
+				$this->data["error"] = I18n::get("valid_zip");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['city'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		if(isset($this->data["error"])){
+			if(isset($_SESSION['user']))  $this->data["login"] = "Logged in";
+			return "login";
+		}
 
+		$customer = Customer::getCustomerbyID($_SESSION['user']);
 		if (!$customer) {
 			return $this->page404();
 		}
 		$customer->updateCustomer($values);
-
 		$this->data["error"] = I18n::get("data_updated");
 		$this->data["login"] = "Logged in";
 		return "login";
@@ -200,8 +230,27 @@ class Controller {
 			return "cart_login";
 		}
 		$values = $request->getParameter('customer', array());
-		$customer = Customer::getCustomerbyID($_SESSION['user']);
+		if (!preg_match('/^[a-zA-Z ]*$/',$values['name'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['surname'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['street'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		else if (!preg_match('/^[0-9]{4}$/',$values['citycode'])) {
+				$this->data["error"] = I18n::get("valid_zip");
+		}
+		else if (!preg_match('/^[a-zA-Z ]*$/',$values['city'])) {
+				$this->data["error"] = I18n::get("text");
+		}
+		if(isset($this->data["error"])){
+			if(isset($_SESSION['user']))  $this->data["login"] = "Logged in";
+			return "cart_login";
+		}
 
+		$customer = Customer::getCustomerbyID($_SESSION['user']);
 		if (!$customer) {
 			return $this->page404();
 		}
@@ -231,7 +280,7 @@ class Controller {
 				return "ajax_allorders";
 	}
 
-	// Kategorie Views
+	// Category Views
 	public function show_chairs(Request $request){
 		$P_CategoryNo = 1;
 		$products= Product::getProductsCategory($P_CategoryNo);
@@ -312,17 +361,19 @@ class Controller {
 			return "cart_table";
 		}
 		else $this->data["orderposition"] = $orderposition;
-		//print_r($orderposition);
-		//getOrders
+
 		$customer = Customer::getCustomerbyID($_SESSION['user']);
+		if (!$customer) {
+			return $this->page404();
+		}
 		$CustomerNo = $customer->getCustomerNo();
 
-			$customer = Order::updateOrder($OrderNo, $CustomerNo);
-
-
+		$customer = Order::updateOrder($OrderNo, $CustomerNo);
 		return "cart_payment";
 	}
 	public function send_order(Request $request){
+		if(!isset($_SESSION['user']))
+			return "cart_login";
 		$creditcart = $request->getParameter('creditcart', array());
 		/*Formvalidation of Customer Creditcard*/
 		if(isset($creditcart['number'])){
@@ -349,27 +400,21 @@ class Controller {
 		/*Form Validation of Customer Data*/
 		if(Controller::getCustomer()->getName() ==null) {
 			$this->data["error"] = I18n::get("save_name");
-			if($this->isLoggedIn())$this->data["login"] = "Logged in";
-			return "cart_login";
 		}
 		if(Controller::getCustomer()->getSurname() ==null) {
 			$this->data["error"] = I18n::get("save_surname");
-			if($this->isLoggedIn())$this->data["login"] = "Logged in";
-			return "cart_login";
 		}
 		if(Controller::getCustomer()->getStreet() ==null) {
 			$this->data["error"] =  I18n::get("save_street");
-			if($this->isLoggedIn())$this->data["login"] = "Logged in";
-			return "cart_login";
 		}
 		if(!preg_match('/^[0-9]{3,4}$/',Controller::getCustomer()->getCitycode())) {
 			$this->data["error"] = I18n::get("save_citycode");
-			if($this->isLoggedIn())$this->data["login"] = "Logged in";
-			return "cart_login";
 		}
 		if(Controller::getCustomer()->getCity() ==null) {
 			$this->data["error"] = I18n::get("save_city");
-			if($this->isLoggedIn())$this->data["login"] = "Logged in";
+		}
+		if(isset($this->data["error"])){
+			if(isset($_SESSION['user']))  $this->data["login"] = "Logged in";
 			return "cart_login";
 		}
 
@@ -377,7 +422,7 @@ class Controller {
 		Order::setOrderFinished($customer->getCustomerNo());
 		$this->data["error"] = I18n::get("order_send");
 		unset($_SESSION['cart']);
-		//@Todo Warenkorb leeren -> Problem: order no is not same as users order no!!!!
+
 		$OrderNo = $_SESSION['orderNo'];
 		Orderpositions::clearOrderPositions($OrderNo);
 		//Inititalize Order
@@ -396,7 +441,6 @@ class Controller {
 			return "home";
 		}
 		else $this->data["products"] = $products;
-
 		return "home";
 	}
 	public function removeProduct(Request $request){
@@ -412,9 +456,8 @@ class Controller {
 			unset($_SESSION['cart']);
 			return "cart_table";
 		}
-		else {
+		else
 			$this->data["orderposition"] = $orderposition;
-		}
 		return "cart_table";
 	}
 	public function incQuantity(Request $request){
@@ -427,9 +470,8 @@ class Controller {
 			unset($_SESSION['cart']);
 			return "cart_table";
 		}
-		else {
+		else
 			$this->data["orderposition"] = $orderposition;
-		}
 		return "cart_table";
 	}
 	public function decQuantity(Request $request){
@@ -442,26 +484,13 @@ class Controller {
 			unset($_SESSION['cart']);
 			return "cart_table";
 		}
-		else {
+		else
 			$this->data["orderposition"] = $orderposition;
-		}
 		return "cart_table";
 	}
 
 
 	// H E L P E R S
-	public function getUsername($id){
-		$id = (int) $id;
-		$res = DB::doQuery("SELECT 'Benutzername' FROM 'user' WHERE 'ID' = $id");
-		if ($res) {
-			if ($student = $res->fetch_object(get_class())) {
-				return $student;
-			}
-		}
-		return null;
-	}
-
-
 	public function &getData() {
 		return $this->data;
 	}
@@ -482,8 +511,6 @@ class Controller {
 		$this->startSession();
 		return isset($_SESSION['admin']);
 	}
-
-
 	public function getTitle() {
 		return $this->title;
 	}
@@ -532,8 +559,8 @@ class Controller {
 		$productname = $product->getTitleDE();
 		echo $productname;
 	}
-	public static function printColor($id){
-		$productoption= Productoption::getProductoptionbyID($id);
+	public static function printColor($ProdOptNo){
+		$productoption= Productoption::getProductoptionbyID($ProdOptNo);
 		$color = $productoption->getColor();
 		echo $color;
 	}
@@ -545,7 +572,6 @@ class Controller {
 		$price = $price*$quantity;
 		echo $price;
 	}
-
 
 	// P R I V A T E  H E L P E R S
 
@@ -579,6 +605,4 @@ class Controller {
 			$this->sessionState = session_start();
 		}
   }
-
-
 }

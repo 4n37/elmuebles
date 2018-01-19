@@ -119,10 +119,4 @@ class Customer implements JsonSerializable{
 		return $res != null;
   }
 
-	 public function delete_customer($id) {
-		$id = (int) $id;
-		$res = DB::doQuery("DELETE FROM customer WHERE CustomerNo = $id");
-		return $res != null;
-	}
-
 }

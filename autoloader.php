@@ -19,5 +19,6 @@ function __autoload($class_name){
 			break;
 		}
 	}
-	I18n::init(); 
+	//Load Internationalization class
+	I18n::init();
 }

@@ -26,15 +26,15 @@ class Orderpositions
         $this->quantity = $quantity+1;
     }
 
-  static public function getOrderPositions($id) {
+  static public function getOrderPositions($OrderNo) {
 		$orderBy="order_no";
 		$orderByStr = '';
     if (in_array($orderBy, ['pos_no','order_no','product_no', 'product_opt_no','quantity']) ) {
       $orderByStr = " ORDER BY $orderBy";
     }
-		$id = DB::getInstance()->real_escape_string($id);
+		$OrderNo = DB::getInstance()->real_escape_string($OrderNo);
 		$allpositions = array();
-		$res = DB::doQuery("SELECT * FROM orderpositions WHERE order_no = '$id'");
+		$res = DB::doQuery("SELECT * FROM orderpositions WHERE order_no = '$OrderNo'");
 		if($res){
 				while ($position = $res->fetch_object(get_class())) {
 						$allpositions[] = $position;
@@ -100,13 +100,11 @@ class Orderpositions
     return true;
   }
 
-
-  //@Todo Produktoptionen anpassen!!!!!
   static public function addItemToOrder($ProdNo, $ProdOptNo){
     $db = DB::getInstance();
-    $ProdOptNo = $db->real_escape_string($ProdOptNo);
-
     $orderno = $_SESSION['orderNo'];
+    $ProdOptNo = $db->real_escape_string($ProdOptNo);
+    $ProdNo = $db->real_escape_string($ProdNo);
     $res = DB::doQuery("SELECT pos_no FROM orderpositions WHERE order_no = '$orderno' AND product_opt_no='$ProdOptNo'");
     if($res->num_rows === 0){
 
@@ -126,8 +124,6 @@ class Orderpositions
 
   }
 
-
-  //Füge Bestellposition ein
   static public function removeItemFromOrderposition($posno){
     //Product in orderposition
     $orderno = $_SESSION['orderNo'];

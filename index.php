@@ -1,14 +1,13 @@
 <?php
 
 	// F R O N T   C O N T R O L L E R
-
 	require_once 'autoloader.php';
 	$request = new Request();
 	//$action = isset($_GET['action']) ? $_GET['action'] : 'home';
 	if (!isset($_SESSION)) { session_start(); }
 	$action = $request->getParameter('action', 'home');
 
-	// Inizialize model
+	// Initizialize model
 	if (!DB::create('localhost', 'root', '', 'elmuebles')) {
 		die("Unable to connect to database [".DB::getInstance()->connect_error."]");
 	}
