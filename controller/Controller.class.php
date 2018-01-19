@@ -272,17 +272,12 @@ class Controller {
 		else $this->data["products"] = $products;
 		return "category";
 	}
-	//Kategorie Views Ende
-	//Warenkorb
-	// --- Pendent Anel ---
-	public function to_order(Request $request){
-		//$this->data["ProdNo"]
-	}
 
 	public function addItemToCart(Request $request){
 		$values = $request->getParameter('row', array());
-		Orderpositions::addItemToOrder($values['ProdNo']);
-		$_SESSION['lang'] = "de";
+		$ProdNo = Productoption::getProductNobyID($values['ProdOptNo']);
+		Orderpositions::addItemToOrder($ProdNo,$values['ProdOptNo']);
+		//$_SESSION['lang'] = "de";
 		$sort = $request->getParameter('sort', 'ProdNo');
 		$products = Product::getProducts($sort);
 		if(empty($products)){
@@ -291,7 +286,6 @@ class Controller {
 			return "home";
 		}
 		else $this->data["products"] = $products;
-
 
 		$_SESSION['cart'] = $products;
 		$this->title = "Home";
@@ -538,10 +532,15 @@ class Controller {
 		$productname = $product->getTitleDE();
 		echo $productname;
 	}
-	public static function printProductPrice($id, $OrderNo){
+	public static function printColor($id){
 		$productoption= Productoption::getProductoptionbyID($id);
+		$color = $productoption->getColor();
+		echo $color;
+	}
+	public static function printProductPrice($ProdOptNo, $OrderNo){
+		$productoption= Productoption::getProductoptionbyID($ProdOptNo);
 		$price =  $productoption->getPOPrice();
-		$orderposition = Orderpositions::getOrderPositionByID($OrderNo);
+		$orderposition = Orderpositions::getOrderPositionByOrder($OrderNo,$ProdOptNo);
 		$quantity = $orderposition->getQuantity();
 		$price = $price*$quantity;
 		echo $price;

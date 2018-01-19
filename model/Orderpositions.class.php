@@ -52,16 +52,21 @@ class Orderpositions
 		}
 		return null;
 	}
-  static public function clearOrderPositions($id) {
-		/*$orderBy="order_no";
-		$orderByStr = '';
-    if (in_array($orderBy, ['pos_no','order_no','product_no', 'product_opt_no','quantity']) ) {
-      $orderByStr = " ORDER BY $orderBy";
-    }*/
-
-		$id = DB::getInstance()->real_escape_string($id);
+  static public function getOrderPositionByOrder($OrderNo,$ProdOptNo) {
+    $OrderNo = DB::getInstance()->real_escape_string($OrderNo);
+    $ProdOptNo = DB::getInstance()->real_escape_string($ProdOptNo);
+		$res = DB::doQuery("SELECT * FROM orderpositions WHERE order_no = '$OrderNo' AND product_opt_no='$ProdOptNo' ");
+		if($res){
+				if($orderposition = $res->fetch_object(get_class())){
+						return $orderposition;
+				}
+		}
+		return null;
+	}
+  static public function clearOrderPositions($OrderNo) {
+		$OrderNo = DB::getInstance()->real_escape_string($OrderNo);
 		$allpositions = array();
-		$res = DB::doQuery("DELETE FROM orderpositions WHERE order_no = '$id'");
+		$res = DB::doQuery("DELETE FROM orderpositions WHERE order_no = '$OrderNo'");
 		if($res){
 				return true;
 		}
@@ -94,33 +99,34 @@ class Orderpositions
     $res = DB::doQuery($sql);
     return true;
   }
+
+
   //@Todo Produktoptionen anpassen!!!!!
-  static public function addItemToOrder($ProdNo){
+  static public function addItemToOrder($ProdNo, $ProdOptNo){
     $db = DB::getInstance();
-    $ProdNo = $db->real_escape_string($ProdNo);
+    $ProdOptNo = $db->real_escape_string($ProdOptNo);
 
     $orderno = $_SESSION['orderNo'];
-
-    //@Todo when product option
-
-    $res = DB::doQuery("SELECT pos_no FROM orderpositions WHERE order_no = '$orderno' AND product_no='$ProdNo'");
+    $res = DB::doQuery("SELECT pos_no FROM orderpositions WHERE order_no = '$orderno' AND product_opt_no='$ProdOptNo'");
     if($res->num_rows === 0){
-        //Product not in orderposition
-        $answer = DB::doQuery("INSERT INTO orderpositions (order_no, product_no,product_opt_no, quantity) VALUES ($orderno,$ProdNo,5,1)");
+
+        $answer = DB::doQuery("INSERT INTO orderpositions (order_no, product_no,product_opt_no, quantity) VALUES ($orderno,$ProdNo,$ProdOptNo,1)");
         return true;
     }
     //Product increment
-    $quantity = DB::doQuery("SELECT quantity FROM orderpositions WHERE order_no = '$orderno' AND product_no='$ProdNo'");
+    $quantity = DB::doQuery("SELECT quantity FROM orderpositions WHERE order_no = '$orderno' AND product_no='$ProdNo' AND product_opt_no='$ProdOptNo'");
     if($quantity){
 				if($position = $quantity->fetch_object(get_class())){
             $position;
 		}}
     $quantity = $position->getQuantity();
-    $sql = sprintf("UPDATE orderpositions SET quantity='%d' WHERE order_no = '$orderno' AND product_no='$ProdNo'", $quantity+1);
+    $sql = sprintf("UPDATE orderpositions SET quantity='%d' WHERE order_no = '$orderno' AND product_no='$ProdNo' AND product_opt_no='$ProdOptNo'", $quantity+1);
     $res = DB::doQuery($sql);
     return true;
 
   }
+
+
   //Füge Bestellposition ein
   static public function removeItemFromOrderposition($posno){
     //Product in orderposition

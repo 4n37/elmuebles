@@ -26,9 +26,39 @@ class Productoption{
   public function getPOStock() {
 			return $this->PO_Stock;
 	}
-
-  static public function getProductoptionbyID($ProdNo) {
+  static public function getProductoptionbyProdID($ProdNo) {
 		$id = DB::getInstance()->real_escape_string($ProdNo);
+		$res = DB::doQuery("SELECT * FROM productopt WHERE ProdNo = '$id'");
+		if($res){
+				if($productopt = $res->fetch_object(get_class())){
+						return $productopt;
+				}
+		}
+		return null;
+	}
+  static public function getProductoptionsbyProdID($ProdNo) {
+    $id = DB::getInstance()->real_escape_string($ProdNo);
+    $allproductoptions = array();
+    $res = DB::doQuery("SELECT * FROM productopt WHERE ProdNo = '$id'");
+    if ($res) {
+      while ($productopt = $res->fetch_object(get_class())) {
+        $allproductoptions[] = $productopt;
+      }
+    }
+    return $allproductoptions;
+	}
+  static public function getProductNobyID($ProdOptNo) {
+    $id = DB::getInstance()->real_escape_string($ProdOptNo);
+    $res = DB::doQuery("SELECT ProdNo FROM productopt WHERE ProdOptNo = '$id'");
+    if($res){
+        if($productopt = $res->fetch_object(get_class())){
+            return $productopt->getProdNo();
+        }
+    }
+    return null;
+  }
+  static public function getProductoptionbyID($ProdOptNo) {
+		$id = DB::getInstance()->real_escape_string($ProdOptNo);
 		$res = DB::doQuery("SELECT * FROM productopt WHERE ProdOptNo = '$id'");
 		if($res){
 				if($productopt = $res->fetch_object(get_class())){

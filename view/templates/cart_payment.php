@@ -44,6 +44,7 @@
 					<table id="shopping_cart_table" class="w3-table">
 					<tr>
 					  <th><?php echo I18n::get("article"); ?></th>
+						<th><?php echo I18n::get("color"); ?></th>
 					  <th><?php echo I18n::get("quantity"); ?></th>
 					  <th><?php echo I18n::get("price"); ?></th>
 					</tr>
@@ -56,7 +57,8 @@
 									$PosNo = $position->getPosNo();
 					  ?>
 					<tr>
-					  <td><?php echo Controller::printProductName($ProdNo)?></td>
+					  	<td><?php echo Controller::printProductName($ProdNo)?></td>
+							<td><?php echo Controller::printColor($optno);	?></td>
 					    <td><?php echo $quantity = $position->getQuantity();	?></td>
 					  	<td><b><?php echo Controller::printProductPrice($optno,$OrderNo); ?></b></td>
 					</tr>

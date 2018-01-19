@@ -37,6 +37,7 @@
 <table id="shopping_cart_table" class="w3-table">
 <tr>
   <th><?php echo I18n::get("article"); ?></th>
+	<th><?php echo I18n::get("color"); ?></th>
   <th><?php echo I18n::get("quantity"); ?></th>
   <th><?php echo I18n::get("price"); ?></th>
   <th><?php echo I18n::get("delete"); ?></th>
@@ -45,13 +46,14 @@
 if(isset($orderposition))
 			foreach($orderposition as $position){
 				$ProdNo = $position->getProductNo();
-				$optno = $position->getProductOptNo();
+				$ProdOptNo = $position->getProductOptNo();
 				$OrderNo = $position->getOrderNo();
 				$PosNo = $position->getPosNo();
 				//echo "ProdNo = {$ProdNo} & OptNo: {$optno}  ;  ";
   ?>
 <tr>
   <td><?php echo Controller::printProductName($ProdNo)?></td>
+	<td><?php echo Controller::printColor($ProdOptNo)?></td>
   <td>
 		<form class="inline-form" action="index.php?action=decQuantity" method="post">
 			<button class="w3-button w3-grey w3-margin "> <i class="fa fa-minus"></i></button>
@@ -63,7 +65,8 @@ if(isset($orderposition))
 			<input type="hidden" name="pos_no" value="<?php echo $PosNo;?>" />
 		</form>
   </td>
-  <td><b><?php echo Controller::printProductPrice($optno,$OrderNo); ?></b></td>
+  <td><b><?php echo Controller::printProductPrice($ProdOptNo,$OrderNo);
+ ?></b></td>
 	<form class="inline-form" action="index.php?action=removeProduct" method="post">
   	<td><button class="w3-button w3-black "  name="posno" value="<?php echo $position->getPosNo();	?>"> <i class="fa fa-trash"> </i></button></td>
 	</form>

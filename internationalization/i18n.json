@@ -136,7 +136,7 @@
       "insert_search" :"Please enter a keyword!",
       "no_products" : "No products in database!",
       "order_date" : "Order Date: Today ",
-      "no_orders" : "No Products in shopping_cart! ",
+      "no_orders" : "No Products in Shopping Cart! ",
       "add_item" : " Add item to Cart",
       "all_orders" : "Show all orders",
       "order_notfinished" : "Pending Orders",
